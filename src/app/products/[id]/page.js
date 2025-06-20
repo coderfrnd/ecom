@@ -1,6 +1,6 @@
 'use client';
 
-import { useState, useEffect } from 'react';
+import { useState, useEffect, useCallback } from 'react';
 import { useParams, useRouter } from 'next/navigation';
 import Link from 'next/link';
 import Image from 'next/image';
@@ -12,11 +12,7 @@ export default function ProductDetailPage() {
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
 
-  useEffect(() => {
-    fetchProduct();
-  }, [params.id]);
-
-  const fetchProduct = async () => {
+  const fetchProduct = useCallback(async () => {
     try {
       const response = await fetch(`/api/products/${params.id}`);
       if (!response.ok) {
@@ -29,7 +25,11 @@ export default function ProductDetailPage() {
     } finally {
       setLoading(false);
     }
-  };
+  }, [params.id]);
+
+  useEffect(() => {
+    fetchProduct();
+  }, [fetchProduct]);
 
   if (loading) {
     return (
@@ -48,7 +48,7 @@ export default function ProductDetailPage() {
         <div className="text-center">
           <div className="text-gray-400 text-6xl mb-4">😕</div>
           <h3 className="text-lg font-medium text-gray-900 mb-2">Product not found</h3>
-          <p className="text-gray-600 mb-6">The product you're looking for doesn't exist.</p>
+          <p className="text-gray-600 mb-6">The product you&apos;re looking for doesn&apos;t exist.</p>
           <Link 
             href="/products"
             className="bg-blue-600 text-white px-6 py-2 rounded-md hover:bg-blue-700 transition-colors"
